@@ -2,19 +2,25 @@ import { useState } from 'react';
 import './App.css';
 
 function App() {
-  const [json, setJson] = useState('');
+  const [jsonTransform, setJsonTransform] = useState('');
   const [csv, setCSV] = useState('');
+  const [csvTransform, setCsvTransform] = useState('');
+  const [json, setJSON] = useState();
   const jsonChange = (event) =>{
-    setJson(event.target.value)
+    setJsonTransform(event.target.value)
+  }
+
+  const csvChange = (event) =>{
+    setCsvTransform(event.target.value);
   }
 
   const transformJSON = (event) =>{
     event.preventDefault()
     try{
-      const test = JSON.parse(json)
+      const test = JSON.parse(jsonTransform)
       let keys = Object.keys(test);
       let values = Object.values(test);
-      let text = `${keys.join(",")}\n${values.join(",")}`;
+      let text = `${keys.join(",")},\n${values.join(",")}`;
       setCSV(text)
     }catch(error){
       alert(error)
@@ -22,10 +28,20 @@ function App() {
     }
     console.log(csv);
   }
+  const transformCSV = (event) =>  {
+    event.preventDefault()
+    const arrayCSV= csvTransform.split(',');
+    let objectJSON={}
+    for (let index = 0; index < arrayCSV.length/2; index++) {
+      objectJSON[arrayCSV[index]]= arrayCSV[index+(arrayCSV.length/2)];
+    }
+    setJSON(JSON.stringify(objectJSON));
+
+  }
 
   const clearContents = (event) => {
     event.preventDefault()
-    setJson('');
+    setJsonTransform('');
     setCSV('');
   }
   const fileLoad = (event) => {
@@ -34,19 +50,28 @@ function App() {
 
     reader.onload = (e) => {
       const text = e.target.result;
-      setJson(text);
+      setJsonTransform(text);
     };
     reader.readAsText(event.target.files[0]);
   }
 
   const saveFile =() =>{
-    const data = `data:,${csv}`;
-    const filename = 'file.csv';
-    const aTag = document.createElement('a');
-
-    aTag.href = data;
-    aTag.download = filename;
-    aTag.click();
+    try{
+      if(csv===''){
+        const error = "There is no content to be saved";
+        throw  error;
+      }
+      const data = `data:,${csv}`;
+      const filename = 'file.csv';
+      const aTag = document.createElement('a');
+  
+      aTag.href = data;
+      aTag.download = filename;
+      aTag.click();
+    }catch(error){
+      alert(error);
+    }
+   
   }
 
   return (
@@ -59,7 +84,7 @@ function App() {
     <div className="transform-container">
         <div className='box-container'>
           <h2>Please input your JSON text here</h2>
-          <input className='input-container' type="text" name="jsontext" value={json} placeholder='{name:value}' onChange={jsonChange}></input>
+          <input className='input-container' type="text" name="jsontext" value={jsonTransform} placeholder='{name:value}' onChange={jsonChange}></input>
           <button onClick={transformJSON}>Convert</button>
         </div>
         <div className='box-container'>
@@ -71,6 +96,18 @@ function App() {
         <div className='box-container'>
           <h2>You can also upload a file to be converted to CSV</h2>
           <input  type="file" name="CSV" accept=".json" onChange={fileLoad}></input>
+        </div>
+
+
+        <div className='box-container'>
+          <h2>Please input your CSV text here</h2>
+          <input className='input-container' type="text" name="csvtext" value={csvTransform} placeholder='name1, name2, name3, value1, value2, value3' onChange={csvChange}></input>
+          <button onClick={transformCSV}>Convert</button>
+        </div>
+        <div className='box-container'>
+          <h2>You will see your text transformed to JSON Here</h2>
+          <input className='input-container' type="text" name="jsontransformed" value={json} placeholder=''></input>
+          <button onClick={clearContents}>Clear</button>
         </div>
     </div>
     </>
