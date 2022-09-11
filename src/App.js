@@ -146,7 +146,7 @@ function App() {
             <h2>You can also upload a file to be converted to JSON</h2>
             <input  type="file" name="CSV" accept=".csv" onChange={fileLoadCSV}></input>
           </div>
-            <button className='changeStyle-button' onClick={toggleMode}>Change Mode</button>
+          <button className='changeStyle-button' onClick={toggleMode}><img src={ChangeMode} alt="change"/></button>
           </div>
         </div>
       </ReactCardFlip>
