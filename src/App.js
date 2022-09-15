@@ -32,6 +32,9 @@ function App() {
     }
     console.log(csv);
   }
+
+
+
   const transformCSV = (event) =>  {
     event.preventDefault()
     const arrayCSV= csvTransform.split(',');
@@ -48,6 +51,8 @@ function App() {
     event.preventDefault()
     setJsonTransform('');
     setCSV('');
+    setCsvTransform('');
+    setJSON('')
   }
 
   const fileLoadJSON = (event) => {
@@ -75,27 +80,48 @@ function App() {
 
 
   const saveFile =() =>{
-    try{
-      if(csv===''){
-        const error = "There is no content to be saved";
-        throw  error;
+    if(json2csv === false){
+      try{
+        if(csv===''){
+          const error = "There is no content to be saved";
+          throw  error;
+        }
+        const data = `data:,${csv}`;
+        const filename = 'file.csv';
+        const aTag = document.createElement('a');
+    
+        aTag.href = data;
+        aTag.download = filename;
+        aTag.click();
+      }catch(error){
+        alert(error);
       }
-      const data = `data:,${csv}`;
-      const filename = 'file.csv';
-      const aTag = document.createElement('a');
-  
-      aTag.href = data;
-      aTag.download = filename;
-      aTag.click();
-    }catch(error){
-      alert(error);
+    } else{
+      try{
+        if(json===''){
+          const error = "There is no content to be saved";
+          throw  error;
+        }
+        const data = `data:,${json}`;
+        const filename = 'file.json';
+        const aTag = document.createElement('a');
+    
+        aTag.href = data;
+        aTag.download = filename;
+        aTag.click();
+      }catch(error){
+        alert(error);
+      }
     }
-   
   }
+
+
   const toggleMode = (event) =>{
     event.preventDefault()
     setJSON2CSV(!json2csv);
   }
+
+
 
   return (
     <div className='flip-card'>
@@ -121,7 +147,7 @@ function App() {
             </div>
           </div>
           <div className='box-container'>
-          <button className='button-74' onClick={saveFile}>Save CSV file into computer</button>
+            <button className='button-74' onClick={saveFile}>Save CSV file into computer</button>
             <h2>You can also upload a file to be converted to CSV</h2>
             <input  type="file" name="JSONfile" accept=".json" onChange={fileLoadJSON}></input>
           </div>
@@ -149,6 +175,7 @@ function App() {
             </div>
           </div>
           <div className='box-container'>
+            <button className='button-74' onClick={saveFile}>Save JSON file into computer</button>
             <h2>You can also upload a file to be converted to JSON</h2>
             <input type="file" name="CSV" accept=".csv" onChange={fileLoadCSV}></input>
           </div>
