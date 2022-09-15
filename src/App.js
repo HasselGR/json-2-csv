@@ -24,7 +24,7 @@ function App() {
       const test = JSON.parse(jsonTransform)
       let keys = Object.keys(test);
       let values = Object.values(test);
-      let text = `${keys.join(",")},${values.join(",")}`;
+      let text = `${keys.join(",")},\n${values.join(",")}`;
       setCSV(text)
     }catch(error){
       alert(error)
@@ -55,29 +55,20 @@ function App() {
     setJSON('')
   }
 
-  const fileLoadJSON = (event) => {
+  const fileLoad = (event) => {
     event.preventDefault();
     const reader = new FileReader();
 
     reader.onload = (e) => {
       const text = e.target.result;
-      setJsonTransform(text);
+      if(json2csv === false){
+        setJsonTransform(text);
+      }else{
+        setCsvTransform(text);
+      }
     };
     reader.readAsText(event.target.files[0]);
   }
-
-  const fileLoadCSV = (event) => {
-    event.preventDefault();
-    const reader = new FileReader();
-
-    reader.onload = (e) => {
-      const text = e.target.result;
-      setCsvTransform(text);
-    };
-    reader.readAsText(event.target.files[0]);
-  }
-
-
 
   const saveFile =() =>{
     if(json2csv === false){
@@ -149,7 +140,7 @@ function App() {
           <div className='box-container'>
             <button className='button-74' onClick={saveFile}>Save CSV file into computer</button>
             <h2>You can also upload a file to be converted to CSV</h2>
-            <input  type="file" name="JSONfile" accept=".json" onChange={fileLoadJSON}></input>
+            <input  type="file" name="JSONfile" accept=".json" onChange={fileLoad}></input>
           </div>
         </div>
         
@@ -177,7 +168,7 @@ function App() {
           <div className='box-container'>
             <button className='button-74' onClick={saveFile}>Save JSON file into computer</button>
             <h2>You can also upload a file to be converted to JSON</h2>
-            <input type="file" name="CSV" accept=".csv" onChange={fileLoadCSV}></input>
+            <input type="file" name="CSV" accept=".csv" onChange={fileLoad}></input>
           </div>
         </div>
       </ReactCardFlip>
